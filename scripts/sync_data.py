@@ -110,6 +110,13 @@ def main(force=False):
         p['source'] = f'{ORIGIN}/player/{slug}'
         photo = OUT / 'assets' / 'players' / f'{slug}.webp'
         if not photo.exists() and photo.with_suffix('.png').exists(): photo = photo.with_suffix('.png')
+        old_profile=previous.get('profiles',{}).get(slug,{}) if previous else {}
+        if photo.exists() and p.get('img') and p['img'] != old_profile.get('img'):
+            try:
+                fresh=get(p['img'].replace('http:', 'https:'), True)
+                photo=photo.with_suffix('.png');photo.write_bytes(fresh)
+            except Exception as error:
+                print(f'Portrait refresh deferred for {slug}: {error}',flush=True)
         if not photo.exists():
             try: photo.write_bytes(get(f'{ORIGIN}/stats/photos/{slug}.webp', True))
             except Exception:

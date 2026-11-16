@@ -29,7 +29,7 @@ concurrency:
 jobs:
   refresh:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 15
     permissions:
       contents: write
     steps:
@@ -51,13 +51,22 @@ jobs:
           else
             python3 scripts/sync_data.py
           fi
+      - name: Refresh multi-league results and the latest published schedule
+        env:
+          FORCE_REFRESH: ${{ inputs.force || false }}
+        run: |
+          if [ "$FORCE_REFRESH" = 'true' ]; then
+            python3 scripts/sync_matches.py --force
+          else
+            python3 scripts/sync_matches.py
+          fi
       - name: Validate data, statistics, and failure handling
         run: npm run check
       - name: Commit only the validated data
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add data.json update.json asset-overrides.json assets history
+          git add data.json update.json match-index.json matches asset-overrides.json assets history
           if ! git diff --cached --quiet; then
             git commit -m "data: refresh verified snapshot $(date -u +%F)"
             git push origin HEAD:main
@@ -67,6 +76,7 @@ jobs:
       - uses: actions/upload-pages-artifact@v4
         with:
           path: .site
+          retention-days: 1
   deploy:
     needs: refresh
     runs-on: ubuntu-latest

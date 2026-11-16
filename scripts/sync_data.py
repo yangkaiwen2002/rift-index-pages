@@ -72,6 +72,8 @@ def write_update_status(data):
         'runId':os.environ.get('GITHUB_RUN_ID'),
         'dataSha256':hashlib.sha256((OUT/'data.json').read_bytes()).hexdigest(),
     }
+    if (OUT/'match-index.json').exists():
+        status['matchIndexSha256']=hashlib.sha256((OUT/'match-index.json').read_bytes()).hexdigest()
     atomic_json(OUT/'update.json',status)
     print('Update status:',json.dumps(status,ensure_ascii=False),flush=True)
 

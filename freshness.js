@@ -6,7 +6,7 @@ export async function fetchUpdateManifest(fetcher=fetch, now=Date.now) {
   if(!/^\d{14}$/.test(String(update.sourceVersion))||!/^\w{64}$/.test(update.dataSha256)||!Number.isFinite(Date.parse(update.checkedAt)))throw Error('更新清单格式无效');
   return update;
 }
-export const revisionChanged=(before,after)=>before.sourceVersion!==after.sourceVersion||before.dataSha256!==after.dataSha256;
+export const revisionChanged=(before,after)=>before.sourceVersion!==after.sourceVersion||before.dataSha256!==after.dataSha256||before.matchIndexSha256!==after.matchIndexSha256;
 export async function loadLatestSnapshot(fetcher=fetch,now=Date.now) {
   let failure;
   for(let attempt=0;attempt<3;attempt++) {

@@ -6,6 +6,7 @@
   "scripts": {
     "data:sync": "python3 scripts/sync_data.py",
     "test": "node --test tests/*.test.js && python3 -m unittest discover -s tests -p \"test_*.py\"",
-    "check": "node --check app.js && node --check model.js && node --check freshness.js && npm test"
+    "check": "node --check app.js && node --check model.js && node --check freshness.js && node --check match-model.js && npm test",
+    "matches:sync": "python3 scripts/sync_matches.py"
   }
 }

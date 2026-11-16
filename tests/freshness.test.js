@@ -29,3 +29,7 @@ test('same source version with corrected payload still counts as an update',()=>
   assert.equal(revisionChanged(update,{...update,dataSha256:'new-digest'}),true);
   assert.equal(revisionChanged(update,{...update,checkedAt:'2026-11-17T00:00:00Z'}),false);
 });
+
+test('a new schedule reloads open pages even if player statistics did not change',()=>{
+  assert.equal(revisionChanged({...update,matchIndexSha256:'old'},{...update,matchIndexSha256:'new'}),true);
+});
